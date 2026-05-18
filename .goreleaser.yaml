@@ -54,6 +54,7 @@ release:
 
 brews:
   - name: sluice
+    directory: Formula
     repository:
       owner: MatthijsvanderPlas
       name: homebrew-sluice
