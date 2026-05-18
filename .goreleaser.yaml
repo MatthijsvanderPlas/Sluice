@@ -51,3 +51,15 @@ release:
     ---
 
     Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
+
+brews:
+  - name: sluice
+    repository:
+      owner: MatthijsvanderPlas
+      name: homebrew-sluice
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: "https://github.com/MatthijsvanderPlas/Sluice"
+    description: "A streaming log viewer with live filtering"
+    license: "MIT"
+    test: |
+      system "#{bin}/sluice", "--version"
