@@ -32,15 +32,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_TAP_TOKEN: ${{ secrets.TOKEN }}
-
-brews:
-  - name: sluice
-    repository:
-      owner: MatthijsvanderPlas
-      name: homebrew-sluice
-      token: "{{ secrets.TOKEN }}"
-    homepage: "https://github.com/MatthijsvanderPlas/Sluice"
-    description: "A streaming log viewer with live filtering"
-    license: "MIT"
-    test: |
-      system "#{bin}/sluice", "--version"
+      
+      brews:
+        - name: sluice
+          repository:
+            owner: MatthijsvanderPlas
+            name: homebrew-sluice
+            token: "{{ secrets.TOKEN }}"
+          homepage: "https://github.com/MatthijsvanderPlas/Sluice"
+          description: "A streaming log viewer with live filtering"
+          license: "MIT"
+          test: |
+            system "#{bin}/sluice", "--version"
