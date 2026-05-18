@@ -116,5 +116,5 @@ func (m ViewModel) headerView() string {
 }
 
 func (m ViewModel) footerView() string {
-	return faintStyle.Render("ctr+c to quit")
+	return faintStyle.Render("ctrl+c to quit")
 }
