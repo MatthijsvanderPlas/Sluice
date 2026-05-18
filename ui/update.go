@@ -105,8 +105,9 @@ func (m ViewModel) scrollDown(n int) ViewModel {
 }
 
 func (m ViewModel) scrollUp(n int) ViewModel {
-	if m.scrollingOffset < (len(m.filteredSnapshot()) - m.screenHeight) {
-		m.scrollingOffset = min(m.scrollingOffset+n, len(m.filteredSnapshot())-m.screenHeight)
+	snapshot := m.filteredSnapshot()
+	if m.scrollingOffset < (len(snapshot) - m.screenHeight) {
+		m.scrollingOffset = min(m.scrollingOffset+n, len(snapshot)-m.screenHeight)
 	}
 
 	return m

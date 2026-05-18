@@ -5,7 +5,7 @@ import (
 
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
-	"example.com/GoLogView/buffer"
+	"github.com/MatthijsvanderPlas/GoLogView/buffer"
 )
 
 type ViewModel struct {

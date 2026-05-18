@@ -71,11 +71,29 @@ func styledLine(line string, needle string) string {
 		styledLine = line
 	}
 
-	if strings.Contains(styledLine, needle) {
-		styledLine = strings.ReplaceAll(styledLine, needle, matchStyle.Render(needle))
+	if needle != "" {
+		styledLine = highlightMatches(styledLine, needle)
 	}
 
 	return styledLine
+}
+
+func highlightMatches(s, needle string) string {
+	lower := strings.ToLower(s)
+	lowerNeedle := strings.ToLower(needle)
+	var b strings.Builder
+	for {
+		idx := strings.Index(lower, lowerNeedle)
+		if idx == -1 {
+			b.WriteString(s)
+			break
+		}
+		b.WriteString(s[:idx])
+		b.WriteString(matchStyle.Render(s[idx : idx+len(needle)]))
+		s = s[idx+len(needle):]
+		lower = lower[idx+len(needle):]
+	}
+	return b.String()
 }
 
 func errorLine(l string) bool {

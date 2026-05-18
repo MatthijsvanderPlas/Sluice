@@ -6,7 +6,7 @@ import (
 	"os"
 
 	tea "charm.land/bubbletea/v2"
-	"example.com/GoLogView/ui"
+	"github.com/MatthijsvanderPlas/GoLogView/ui"
 )
 
 func main() {
@@ -14,8 +14,13 @@ func main() {
 
 	go func() {
 		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Buffer(make([]byte, 1024*1024), 1024*1024)
 		for scanner.Scan() {
 			p.Send(ui.NewLineMsg(scanner.Text()))
+		}
+		err := scanner.Err()
+		if err != nil {
+			p.Send(ui.NewLineMsg("ERROR reading stdin: " + err.Error()))
 		}
 	}()
 

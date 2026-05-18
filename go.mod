@@ -1,4 +1,4 @@
-module example.com/GoLogView
+module github.com/MatthijsvanderPlas/GoLogView
 
 go 1.26.3
 
