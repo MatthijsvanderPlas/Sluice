@@ -6,7 +6,7 @@ import (
 	"os"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/MatthijsvanderPlas/GoLogView/ui"
+	"github.com/MatthijsvanderPlas/sluice/ui"
 )
 
 func main() {

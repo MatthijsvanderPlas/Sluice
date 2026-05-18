@@ -1,4 +1,4 @@
-module github.com/MatthijsvanderPlas/GoLogView
+module github.com/MatthijsvanderPlas/sluice
 
 go 1.26.3
 
