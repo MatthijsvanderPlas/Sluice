@@ -2,15 +2,15 @@ name: goreleaser
 
 on:
   pull_request:
-    push:
-      tags:
-        - "*"
+  push:
+    tags:
+      - "*"
 
 permissions:
   contents: write
 
 
-josb:
+jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
@@ -30,4 +30,4 @@ josb:
           version: "latest"
           args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
