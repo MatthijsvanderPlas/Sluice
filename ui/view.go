@@ -1,0 +1,102 @@
+package ui
+
+import (
+	"strings"
+
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+)
+
+var (
+	faintStyle = lipgloss.NewStyle().Faint(true).Foreground(lipgloss.Color("#ECECEC"))
+	errorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF5555"))
+	warnStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFB86C"))
+	matchStyle = lipgloss.NewStyle().Background(lipgloss.Color("#F1FA8C")).Foreground(lipgloss.Color("#282A36"))
+)
+
+func (m ViewModel) View() tea.View {
+	snapshot := m.filteredSnapshot()
+	if len(snapshot) == 0 {
+		return tea.NewView("")
+	}
+
+	height := m.screenHeight
+	if height == 0 {
+		height = len(snapshot)
+	}
+
+	start := max(len(snapshot)-m.scrollingOffset-height, 0)
+	end := len(snapshot) - m.scrollingOffset
+
+	visible := snapshot[start:end]
+	styled := make([]string, len(visible))
+	needle := m.filter.Value()
+	for i, line := range visible {
+		styled[i] = styledLine(line, needle)
+	}
+	s := strings.Join(styled, "\n")
+
+	var c *tea.Cursor
+	if m.editMode && !m.filter.VirtualCursor() {
+		c = m.filter.Cursor()
+		if c != nil {
+			c.Y += lipgloss.Height(s) + lipgloss.Height(m.headerView())
+		}
+	}
+
+	str := lipgloss.JoinVertical(lipgloss.Top, s, m.headerView(), m.filter.View(), m.footerView())
+	if m.quitting {
+		str += "\n"
+	}
+	v := tea.NewView(str)
+	if m.editMode {
+		v.Cursor = c
+	} else {
+		v.Cursor = nil
+	}
+
+	return v
+}
+
+func styledLine(line string, needle string) string {
+	var styledLine string
+
+	if errorLine(line) {
+		styledLine = errorStyle.Render(line)
+	} else if warnLine(line) {
+		styledLine = warnStyle.Render(line)
+	} else if debugLine(line) {
+		styledLine = faintStyle.Render(line)
+	} else {
+		styledLine = line
+	}
+
+	if strings.Contains(styledLine, needle) {
+		styledLine = strings.ReplaceAll(styledLine, needle, matchStyle.Render(needle))
+	}
+
+	return styledLine
+}
+
+func errorLine(l string) bool {
+	return strings.Contains(strings.ToLower(l), "error") ||
+		strings.Contains(strings.ToLower(l), "err")
+}
+
+func warnLine(l string) bool {
+	return strings.Contains(strings.ToLower(l), "warning") ||
+		strings.Contains(strings.ToLower(l), "wrn")
+}
+
+func debugLine(l string) bool {
+	return strings.Contains(strings.ToLower(l), "debug") ||
+		strings.Contains(strings.ToLower(l), "dbg")
+}
+
+func (m ViewModel) headerView() string {
+	return lipgloss.NewStyle().Bold(true).Underline(true).Render("Search logs:")
+}
+
+func (m ViewModel) footerView() string {
+	return faintStyle.Render("ctr+c to quit")
+}
