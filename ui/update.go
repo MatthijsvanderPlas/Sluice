@@ -69,6 +69,15 @@ func (m ViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.filter.Focus()
 				return m, nil
 
+			case "g":
+				// go to top
+				m.scrollingOffset = max(len(m.filteredSnapshot()) - m.screenHeight)
+				return m, nil
+
+			case "G":
+				m.scrollingOffset = 0
+				return m, nil
+
 			case "/":
 				m.editMode = true
 				m.scrollingOffset = 0

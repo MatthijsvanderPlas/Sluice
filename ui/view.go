@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"strconv"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
@@ -40,7 +41,8 @@ func (m ViewModel) View() tea.View {
 		} else {
 			prevLine = visible[i-1]
 		}
-		styled[i] = styledLine(line, needle, prevLine)
+		lineStart := "[" + strconv.Itoa(start+i) + "] "
+		styled[i] = lineStart + styledLine(line, needle, prevLine)
 	}
 	s := strings.Join(styled, "\n")
 
