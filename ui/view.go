@@ -14,6 +14,8 @@ var (
 	matchStyle = lipgloss.NewStyle().Background(lipgloss.Color("#F1FA8C")).Foreground(lipgloss.Color("#282A36"))
 )
 
+var lastStyleUser lipgloss.Style
+
 func (m ViewModel) View() tea.View {
 	snapshot := m.filteredSnapshot()
 	if len(snapshot) == 0 {
@@ -32,7 +34,13 @@ func (m ViewModel) View() tea.View {
 	styled := make([]string, len(visible))
 	needle := m.filter.Value()
 	for i, line := range visible {
-		styled[i] = styledLine(line, needle)
+		var prevLine string
+		if i == 0 {
+			prevLine = ""
+		} else {
+			prevLine = visible[i-1]
+		}
+		styled[i] = styledLine(line, needle, prevLine)
 	}
 	s := strings.Join(styled, "\n")
 
@@ -58,17 +66,41 @@ func (m ViewModel) View() tea.View {
 	return v
 }
 
-func styledLine(line string, needle string) string {
+func styledLine(line string, needle string, prevLine string) string {
 	var styledLine string
+
+	if len(strings.TrimLeft(line, " ")) != len(line) || len(strings.TrimLeft(line, " \t")) != len(line) || len(strings.TrimLeft(line, "-")) != len(line) {
+		// Indented lines get the style of the line that came before it
+		styledLine = lastStyleUser.Render(line)
+		if needle != "" {
+			styledLine = highlightMatches(styledLine, needle)
+		}
+		return styledLine
+	}
+
+	if errorLine(prevLine) || warnLine(prevLine) {
+		// usually errors and warnings are multiline so we assume the next line is always apart of it
+		// this catches cases for us where the initial error is too long and spills into the next styledLine
+		// And therefore we do not get an indent
+		styledLine = lastStyleUser.Render(line)
+		if needle != "" {
+			styledLine = highlightMatches(styledLine, needle)
+		}
+		return styledLine
+	}
 
 	if errorLine(line) {
 		styledLine = errorStyle.Render(line)
+		lastStyleUser = errorStyle
 	} else if warnLine(line) {
 		styledLine = warnStyle.Render(line)
+		lastStyleUser = warnStyle
 	} else if debugLine(line) {
 		styledLine = faintStyle.Render(line)
+		lastStyleUser = faintStyle
 	} else {
 		styledLine = line
+		lastStyleUser = lipgloss.Style{}
 	}
 
 	if needle != "" {

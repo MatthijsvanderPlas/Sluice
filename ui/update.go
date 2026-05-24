@@ -31,6 +31,7 @@ func (m ViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 
 			case "ctrl+c":
+				m.filter.Blur()
 				m.quitting = true
 				return m, tea.Quit
 			}
